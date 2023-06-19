@@ -8,6 +8,10 @@ packages = [{include = "tmd_recognition"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+numpy = "^1.25.0"
+pandas = "^2.0.2"
+pydantic = "^1.10.9"
+scikit-learn = "^1.2.2"
 
 
 [build-system]
