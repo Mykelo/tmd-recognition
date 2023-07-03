@@ -2,8 +2,7 @@ from collections.abc import Callable
 from typing import Optional
 import numpy as np
 import cv2
-from skimage.feature import hog
-import src.utils as utils
+import src.images.utils as utils
 import matplotlib.pyplot as plt
 
 
@@ -243,6 +242,157 @@ class DominguezFeaturesExtractor(FacialFeaturesExtractor):
         assert len(res) == self.geometric_features_num, "Wrong number of features"
         return res
 
+
+class DominguezAdaptedFeaturesExtractor(DominguezFeaturesExtractor):
+    """
+    Calculate features from the article of Parra-Dominguez et al adapted by dr Karolewski. By default points' indices are taken from
+    the WFLW dataset annotation.
+    """
+
+    def __init__(self, points_mapper: Optional[Callable[[int], int]] = None, reference_points: tuple[int, int] = (64, 68)):
+        """
+        The points_mapper function is responsible for mapping indices of the WFLW annotations to other
+        annotation space of your choice. It must be compatible with the array of points given to the
+        calculate function.
+        """
+        super().__init__(points_mapper=points_mapper, reference_points=reference_points)
+        self.geometric_features_num = 15
+
+    # def _get_tilt_angle(self) -> float:
+    #     # Rotate the face according to the relatively stable points (64 and 68)
+    #     return angle(self.P['64'], self.P['68'])
+
+    def _calc_features(self, image: np.ndarray, points: np.ndarray) -> np.ndarray:
+        P = self.P
+        # Notation used here is the same as in the article
+        features = {}
+        # features['f0'] = abs(angle(P['33'], P['46']))
+        # features['f1'] = abs(angle(P['35'], P['44']))
+        # features['f2'] = abs(angle(P['37'], P['42']))
+        features['f4'] = slope(P['33'], P['46'])
+        features['f5'] = slope(P['35'], P['44'])
+        features['f6'] = slope(P['37'], P['42'])
+        features['f7'] = slope(P['60'], P['72'])
+        # features['f7'] = abs(angle(P['60'], P['72']))
+
+        # Width of the eye (left and right)
+        Bl = abs(P['60'][0] - P['64'][0])
+        Br = abs(P['68'][0] - P['72'][0])
+        features['f8'] = max(Bl/Br, Br/Bl)
+
+        D = abs(P['0'][0] - P['60'][0])
+        E = abs(P['72'][0] - P['32'][0])
+        features['f9'] = max(D/E, E/D)
+
+        H = distance(P['60'], P['55'])
+        I = distance(P['72'], P['59'])
+        features['f10'] = max(H/I, I/H)
+
+        F = distance(P['60'], P['85'])
+        G = distance(P['72'], P['85'])
+        features['f15'] = max(F/G, G/F)
+
+        Nl = distance(P['61'], P['67'])
+        Nr = distance(P['63'], P['65'])
+        # N = (Nl + Nr) / 2
+        Ol = distance(P['69'], P['75'])
+        Or = distance(P['71'], P['73'])
+        # O = (Ol + Or) / 2
+        # features['f11'] = max(N/O, O/N)
+        features['f12'] = max(Nl/Or, Or/Nl)
+        features['f13'] = max(Nr/Ol, Ol/Nr)
+        # features['f14'] = abs(angle(P['76'], P['82']))
+        # features['f14'] = slope(P['76'], P['82'])
+
+
+        Pl = distance(P['77'], P['87'])
+        Ql = distance(P['81'], P['83'])
+        features['f16'] = max(Pl/Ql, Ql/Pl)
+
+        Pu = distance(P['78'], P['86'])
+        Qu = distance(P['80'], P['84'])
+        features['f17'] = max(Pu/Qu, Qu/Pu)
+
+        # Vl = distance(P['76'], P['85'])
+        # Vr = distance(P['82'], P['85'])
+        # A = distance(P['0'], P['32'])
+        # features['f18'] = max(Vl/A, Vr/A)
+
+        # W = abs(P['76'][0] - P['82'][0])
+        # features['f19'] = max(Pl/W, Ql/W)
+        # features['f20'] = max(Pu/W, Qu/W)
+        features['f22'] = slope(P['55'], P['59'])
+        # features['f22'] = abs(angle(P['55'], P['59']))
+        features['f23'] = abs(angle(P['57'], P['85']))
+
+        J = distance(P['55'], P['85'])
+        K = distance(P['59'], P['85'])
+        features['f24'] = max(J/K, K/J)
+
+        T = distance(P['34'], P['85'])
+        U = distance(P['45'], P['85'])
+        # features['f25'] = max(T/A, U/A)
+
+        R = distance(P['36'], P['85'])
+        S = distance(P['43'], P['85'])
+        # features['f26'] = max(R/A, S/A)
+
+        res = np.array(list(features.values()))
+        assert len(res) == self.geometric_features_num, "Wrong number of features"
+        return res
+    
+class OtherParalysisFeaturesExtractor(DominguezFeaturesExtractor):
+    """
+    Calculate features from articles of Chang et al., Kim et al. and Barbosa et al. By default points' indices are taken from
+    the WFLW dataset annotation. This class includes only features that are not already present in
+    the Karolewski and Dominguez sets.
+    """
+
+    def __init__(self, points_mapper: Optional[Callable[[int], int]] = None, reference_points: tuple[int, int] = (64, 68)):
+        super().__init__(points_mapper, reference_points)
+        # Less points are required
+        self.points_indices = list(range(98))
+        self.geometric_features_num = 4
+
+    def _calc_features(self, image: np.ndarray, points: np.ndarray) -> np.ndarray:
+        P = self.P
+        # Notation used here is the same as in the article
+
+        ref1 = P[str(self.reference_points[0])]
+        ref2 = P[str(self.reference_points[1])]
+
+        features = {}
+        features['f0'] = slope(P['76'], P['82'])  # !
+
+        BNl = distance(P['35'], P['57'])
+        BNr = distance(P['44'], P['57'])
+        features['f1'] = max(BNl/BNr, BNr/BNl)
+
+        # NMl = distance(P['57'], P['76'])
+        # NMr = distance(P['57'], P['82'])
+        # features['f2'] = max(NMl/NMr, NMr/NMl)
+
+        eyebrow_mean_p_l = np.stack([P[str(i)]
+                                    for i in range(33, 42)]).mean(axis=0)
+        eyebrow_mean_p_r = np.stack([P[str(i)]
+                                    for i in range(42, 51)]).mean(axis=0)
+        EBl = dist_to_line(
+            ref1, ref2, eyebrow_mean_p_l)
+        EBr = dist_to_line(
+            ref1, ref2, eyebrow_mean_p_r)
+        features['f3'] = max(EBl/EBr, EBr/EBl)
+
+        eye_mean_p_l = np.stack([P[str(i)]
+                                for i in range(60, 68)]).mean(axis=0)
+        eye_mean_p_r = np.stack([P[str(i)]
+                                for i in range(68, 76)]).mean(axis=0)
+        EMl = distance(eye_mean_p_l, eyebrow_mean_p_l)
+        EMr = distance(eye_mean_p_r, eyebrow_mean_p_r)
+        features['f4'] = max(EMl/EMr, EMr/EMl)
+
+        res = np.array(list(features.values()))
+        assert len(res) == self.geometric_features_num, "Wrong number of features"
+        return res
 
 class KarolewskiFeaturesExtractor(DominguezFeaturesExtractor):
     def __init__(self, points_mapper: Optional[Callable[[int], int]] = None, reference_points: tuple[int, int] = (64, 68)):
@@ -602,6 +752,30 @@ class KarolewskiFeaturesExtractor(DominguezFeaturesExtractor):
         return res
 
 
+class CustomFeaturesExtractor(DominguezFeaturesExtractor):
+    def __init__(self, points_mapper: Optional[Callable[[int], int]] = None, reference_points: tuple[int, int] = (64, 68)):
+        super().__init__(points_mapper, reference_points)
+        # Less points are required
+        self.points_indices = list(range(98))
+        self.dominguez = DominguezAdaptedFeaturesExtractor(
+            points_mapper=points_mapper)
+        self.other = OtherParalysisFeaturesExtractor(points_mapper=points_mapper)
+        self.karolewski = KarolewskiFeaturesExtractor(
+            points_mapper=points_mapper)
+        self.geometric_features_num = self.dominguez.geometric_features_num + self.other.geometric_features_num + self.karolewski.geometric_features_num
+
+
+    def _calc_features(self, image: np.ndarray, points: np.ndarray) -> np.ndarray:
+        self.dominguez.P = self.P
+        self.other.P = self.P
+        self.karolewski.P = self.P
+        dominguez_features = self.dominguez._calc_features(image, points)
+        other_features = self.other._calc_features(image, points)
+        karolewski_features = self.karolewski._calc_features(image, points)
+
+        res = np.concatenate([karolewski_features, dominguez_features, other_features])
+        assert len(res) == self.geometric_features_num, "Wrong number of features"
+        return res
 
 class KarolewskiFilteredFeaturesExtractor(KarolewskiFeaturesExtractor):
     """
@@ -618,6 +792,7 @@ class KarolewskiFilteredFeaturesExtractor(KarolewskiFeaturesExtractor):
         res = features[[4, 7, 8, 14, 16, 18]]
         assert len(res) == self.geometric_features_num, "Wrong number of features"
         return res
+    
 
 class EmptyFeaturesExtractor(DominguezFeaturesExtractor):
 

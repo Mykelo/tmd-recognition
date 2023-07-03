@@ -1,7 +1,7 @@
 from typing import Optional
 import pytorch_lightning as pl
-from PIPNet_lib.functions import *
-from PIPNet_lib.networks import *
+from src.common.PIPNet_lib.functions import *
+from src.common.PIPNet_lib.networks import *
 import torchvision.models as models
 import torch.utils.data
 import torch.optim as optim
@@ -13,7 +13,7 @@ import sys
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 
-import src.data_modules as data_modules
+import src.images.data_modules as data_modules
 from .types import Config
 sys.path.insert(0, '..')
 

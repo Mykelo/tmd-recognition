@@ -1,17 +1,16 @@
-from typing import Optional
 from tqdm import tqdm
 import pandas as pd
 import cv2
 import os
 import numpy as np
-from PIPNet_lib.preprocess import gen_meanface
-from src.datasets import FITYMIDataset, FacialLandmarksDataset, MENPODataset, TNFDataset
-import shutil
+from src.images.datasets import (
+    FacialLandmarksDataset,
+)
 import pickle
 
-from src.types import Config
-from src.experiments import WFLW
-from src.detector import PIPNet_PL, get_face_detector
+from src.images.types import Config
+from src.images.experiments import WFLW
+from src.images.detector import PIPNet_PL
 
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
