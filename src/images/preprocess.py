@@ -8,7 +8,7 @@ from src.images.datasets import (
 )
 import pickle
 
-from src.images.types import Config
+from src.images.configs import Config
 from src.images.experiments import WFLW
 from src.images.detector import PIPNet_PL
 

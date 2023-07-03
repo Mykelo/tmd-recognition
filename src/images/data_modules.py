@@ -5,13 +5,13 @@ from torch.utils.data import DataLoader, random_split
 import pandas as pd
 import copy
 import torchvision.transforms as transforms
-from PIPNet_lib.data_utils import ImageFolder_pip
-from PIPNet_lib.functions import get_label, get_meanface
-import src.datasets as datasets
-import src.features as feat
+from src.common.PIPNet_lib.data_utils import ImageFolder_pip
+from src.common.PIPNet_lib.functions import get_label, get_meanface
+import src.images.datasets as datasets
+import src.images.features as feat
 from .experiments import TNF, WFLW
-import src.detector as detector
-from .types import Config
+import src.images.detector as detector
+from .configs import Config
 import torch
 import os
 import numpy as np

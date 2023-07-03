@@ -14,7 +14,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 
 import src.images.data_modules as data_modules
-from .types import Config
+from .configs import Config
 sys.path.insert(0, '..')
 
 package_directory = os.path.dirname(os.path.abspath(__file__))

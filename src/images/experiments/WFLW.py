@@ -1,4 +1,4 @@
-from src.types import Config
+from src.images.configs import Config
 
 pip_32_16_60_r101_l2_l1_10_1_nb10 = Config(**{
     "det_head": 'pip',

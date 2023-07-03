@@ -2,7 +2,6 @@
 name = "tmd-recognition"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 packages = [{include = "tmd_recognition"}]
 
@@ -12,6 +11,15 @@ numpy = "^1.25.0"
 pandas = "^2.0.2"
 pydantic = "^1.10.9"
 scikit-learn = "^1.2.2"
+ipykernel = "^6.24.0"
+tqdm = "^4.65.0"
+matplotlib = "^3.7.1"
+onnxruntime = "^1.15.1"
+scikit-image = "^0.21.0"
+pytorch-lightning = "^2.0.4"
+torchvision = "^0.15.2"
+urllib3 = "<2.0"
+insightface = "^0.7.3"
 
 
 [build-system]

@@ -1,4 +1,4 @@
-from .types import Config
+from src.images.configs import Config
 import torchvision.transforms as transforms
 import torch.utils.data
 import torch.nn.parallel
@@ -9,11 +9,11 @@ from typing import Optional
 import cv2
 import os
 import sys
-from PIPNet_lib.functions import forward_pip, get_meanface
+from src.common.PIPNet_lib.functions import forward_pip, get_meanface
 from insightface.app import FaceAnalysis
 
-import src.training as training
-from .utils import draw_points, HiddenPrints
+import src.images.training as training
+from src.images.utils import draw_points, HiddenPrints
 sys.path.insert(0, '..')
 
 
