@@ -67,6 +67,7 @@ def extract_landmarks(
     path: str,
     labels: pd.DataFrame,
     cfg: Config = WFLW.pip_32_16_60_r101_l2_l1_10_1_nb10,
+    snapshots_path: str = os.path.join(package_directory, "..", "..", "data", "snapshots")
 ):
     images_target_path = os.path.join(path, "processed_images")
     if not os.path.exists(images_target_path):
@@ -76,9 +77,7 @@ def extract_landmarks(
 
     pipnet = PIPNet_PL(
         cfg,
-        snapshots_path=os.path.join(
-            package_directory, "..", "facial-landmarks", "snapshots"
-        ),
+        snapshots_path=snapshots_path,
     )
 
     all_landmarks = {}
@@ -91,8 +90,6 @@ def extract_landmarks(
 
     with open(os.path.join(images_target_path, "landmarks.pkl"), "wb") as handle:
         pickle.dump(all_landmarks, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    # all_landmarks = np.stack(all_landmarks, axis=0)
-    # np.save(os.path.join(images_target_path, 'landmarks.npy'), all_landmarks)
 
 
 def save_data(

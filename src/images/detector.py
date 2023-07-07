@@ -53,12 +53,12 @@ class PIPNet_PL:
 
         path = os.path.join(self.snapshots_path, cfg.data_name,
                             f'{cfg.experiment_name}.ckpt')
-        return training.PIPModule.load_from_checkpoint(path, cfg=cfg)
+        return training.PIPModule.load_from_checkpoint(path, cfg=cfg, map_location=torch.device('cpu'))
 
     def update_config(self, new_cfg: Config):
         self.cfg = new_cfg
         self.meanface_indices, self.reverse_index1, self.reverse_index2, self.max_len = get_meanface(
-            os.path.join(package_directory, '..', 'data', self.cfg.data_name, 'meanface.txt'), self.cfg.num_nb)
+            os.path.join(package_directory, '..', '..', 'data', 'snapshots', self.cfg.data_name, 'meanface.txt'), self.cfg.num_nb)
         if self.cfg.use_gpu:
             self.device = torch.device(
                 "cuda:0" if torch.cuda.is_available() else "cpu")

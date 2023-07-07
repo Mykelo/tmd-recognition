@@ -69,10 +69,10 @@ def main():
 
     app = get_face_detector()
     print("Preparing DENTA dataset...")
-    dataset_path = "../data/denta_v1"
+    dataset_path = "../../data/denta_v1"
     df = get_denta_labels(dataset_path, split_type="random")
     extract_faces_denta(dataset_path, df, detector=lambda image: app.get(image))
-    data_path = os.path.join("..", "data", "experiments", "denta")
+    data_path = os.path.join("..", "..", "experiments", "images_results")
     extract_landmarks(dataset_path, df)
 
     features = []
