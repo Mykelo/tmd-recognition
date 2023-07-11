@@ -33,3 +33,12 @@ There are 2 main entry points to this part of the code:
 
 - `src/images/experiments.ipynb` - notebook with experiments
 - `src/images/analysis.ipynb` - notebook that generates charts
+
+
+## Surveys
+
+Here we have 3 notebooks responsible for:
+
+- `src/surveys/Create csv.ipynb` - processing raw data into data suitable for a decision tree,
+- `src/surveys/Tree.ipynb` - implementation and testing of the decision tree algorithm,
+- `src/surveys/rm_bad_patiences.ipynb` - filter out incorrect data.
